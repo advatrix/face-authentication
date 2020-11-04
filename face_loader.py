@@ -30,7 +30,7 @@ class BaseImageLoader(ABC):
 		self._SCALE_FACTOR = scale_factor or 1.2
 		self._MIN_NEIGHBORS = min_neighbors or 5
 		self._MIN_SIZE = min_size or (20, 20)
-		self._face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+		self.face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
 	@staticmethod
 	def _save_face(self, face_id, num, img):
@@ -46,8 +46,6 @@ class CameraLoader(BaseImageLoader):
 	def __init__(self, image_count=None, scale_factor=None, min_neighbors=None, min_size=None):
 		super().__init__(scale_factor, min_neighbors, min_size)
 		self._IMAGE_COUNT = image_count or 30
-		self._cap = cv2.VideoCapture(0)
-		self._cap.set(cv2.CAP_PROP_FPS, 24)
 
 	def __str__(self):
 		return "Camera Loader"
@@ -63,11 +61,13 @@ class CameraLoader(BaseImageLoader):
 		Collects 30 different images of user's face by default.
 		"""
 		count = 0
+		cap = cv2.VideoCapture(0)
+		cap.set(cv2.CAP_PROP_FPS, 24)
 		while True:
-			ret, img = self._cap.read()
+			ret, img = cap.read()
 			gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-			faces = self._face_сascade.detectMultiScale(
+			faces = self.face_cascade.detectMultiScale(
 				gray,
 				scaleFactor=self._SCALE_FACTOR,
 				minNeighbors=self._MIN_NEIGHBORS,
@@ -83,6 +83,9 @@ class CameraLoader(BaseImageLoader):
 			k = cv2.waitKey(100) & 0xff  # 'ESC'
 			if k == 27 or count >= 30:
 				break
+
+		cap.release()
+		cv2.destroyAllWindows()
 
 
 class FileLoader(BaseImageLoader):

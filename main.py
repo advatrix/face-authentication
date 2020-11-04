@@ -14,11 +14,11 @@ class AppManager:
 		self.loader = FaceLoader()
 		self.authenticator = Authenticator()
 
-	def load_from_camera(self):
-		return self.loader.load_from_camera()
+	def load_from_camera(self, face_id, name):
+		return self.loader.load_from_camera(face_id, name)
 
-	def load_from_file(self, filename: str):
-		return self.loader.load_from_file(filename)
+	def load_from_file(self, filename: str, face_id, name):
+		return self.loader.load_from_file(filename, face_id, name)
 
 	def authenticate(self):
 		return self.authenticator.authenticate()

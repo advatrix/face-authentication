@@ -10,9 +10,9 @@ class NoSourceProvidedError(Exception):
 
 
 class FaceLoader:
-	def __init__(self, saves_path: str = 'face'):
-		self.cascadePath = "haarcascade_frontalface_default.xml"
-		self.faceCascade = cv2.CascadeClassifier(self.cascadePath)
+	def __init__(self, saves_path: str = 'face', cascade_path: str = "haarcascade_frontalface_default.xml"):
+		# self.cascade_path = "haarcascade_frontalface_default.xml"
+		self.faceCascade = cv2.CascadeClassifier(cascade_path)
 		self.camera_loader = CameraLoader()
 		self.file_loader = FileLoader()
 		self.trainer = Trainer()

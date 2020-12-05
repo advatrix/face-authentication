@@ -10,7 +10,7 @@ class NoSourceProvidedError(Exception):
 
 
 class FaceLoader:
-	def __init__(self, saves_path: str = 'face', cascade_path: str = "haarcascade_frontalface_default.xml"):
+	def __init__(self, saves_path: str = 'faces', cascade_path: str = "haarcascade_frontalface_default.xml"):
 		# self.cascade_path = "haarcascade_frontalface_default.xml"
 		self.faceCascade = cv2.CascadeClassifier(cascade_path)
 		self.camera_loader = CameraLoader()
@@ -41,7 +41,7 @@ class BaseImageLoader(ABC):
 	def _save_face(face_id, num, img, username="user"):
 		# TODO: check if folder 'faces' exists
 		# TODO: change "user" to username??
-		filepath = f"face/{username}.{face_id}.{num}.jpg"
+		filepath = f"faces/{username}.{face_id}.{num}.jpg"
 		cv2.imwrite(filepath, img)
 
 	@abstractmethod

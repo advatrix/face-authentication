@@ -1,11 +1,28 @@
 import sys
+import os
 
 from PySide2.QtCore import Slot
 from PySide2.QtGui import QKeySequence, QWindow
 from PySide2.QtWidgets import QMainWindow, QAction, QApplication, QPushButton, QVBoxLayout, QWidget, QStackedLayout, \
-    QLabel, QLineEdit
+    QLabel, QLineEdit, QFileDialog, QErrorMessage
 
 from face_authentication import AppManager
+
+
+class MessageWindow(QWindow):
+    def __init__(self, message="Error", parent=None):
+        QWindow.__init__(self, parent)
+
+        self.layout = QVBoxLayout()
+
+        self.message = QLabel(message)
+        self.layout.addWidget(self.message)
+
+        self.ok_button = QPushButton("Ok")
+        self.ok_button.clicked.connect(self.close)
+        self.layout.addWidget(self.ok_button)
+
+        self.setLayout(self.layout)
 
 
 class ApplicationWidget(QWidget):
@@ -46,6 +63,12 @@ class FaceLoadingWidget(QWidget):
         self.name_line_edit = QLineEdit()
         self.layout.addWidget(self.name_line_edit)
 
+        self.id_label = QLabel("Enter user id (leave blank if the user is new)")
+        self.layout.addWidget(self.id_label)
+
+        self.id_line_edit = QLineEdit()
+        self.layout.addWidget(self.id_line_edit)
+
         self.from_file_button = QPushButton("From file")
         self.from_file_button.clicked.connect(self.load_from_file)
         self.layout.addWidget(self.from_file_button)
@@ -64,7 +87,24 @@ class FaceLoadingWidget(QWidget):
 
     @Slot()
     def load_from_file(self):
-        pass
+        file_name = QFileDialog.getOpenFileName(self, "Open Image", os.getcwd(), "Image Files (*.png *.jpg *.bmp)")[0]
+        user_name = self.name_line_edit.text()
+        id_inp = self.id_line_edit.text()
+
+        if not id_inp:
+            id_ = app.get_next_face_id()
+        else:
+            id_ = int(id_inp)
+
+        if file_name and user_name:
+            app.load_from_file(file_name, id_, user_name)
+            success_message = QErrorMessage(self)
+            success_message.showMessage(f"Successfully loaded a new face of {user_name} (id {id_})")
+            self.name_line_edit.clear()
+            self.id_line_edit.clear()
+        else:
+            error_message = QErrorMessage(self)
+            error_message.showMessage("File name or user name not provided")
 
     @Slot()
     def load_from_camera(self):
@@ -209,11 +249,11 @@ class GUIManager:
 
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    # backend = AppManager()
+    ui_app = QApplication(sys.argv)
+    app = AppManager()
 
     window = MainWindow()
     window.resize(800, 600)
     window.show()
 
-    sys.exit(app.exec_())
+    sys.exit(ui_app.exec_())

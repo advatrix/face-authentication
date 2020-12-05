@@ -2,7 +2,10 @@ import sys
 
 from PySide2.QtCore import Slot
 from PySide2.QtGui import QKeySequence, QWindow
-from PySide2.QtWidgets import QMainWindow, QAction, QApplication, QPushButton, QVBoxLayout, QWidget, QStackedLayout, QLabel
+from PySide2.QtWidgets import QMainWindow, QAction, QApplication, QPushButton, QVBoxLayout, QWidget, QStackedLayout, \
+    QLabel, QLineEdit
+
+from face_authentication import AppManager
 
 
 class ApplicationWidget(QWidget):
@@ -27,9 +30,49 @@ class SettingsWidget(ApplicationWidget):
         ApplicationWidget.__init__(self, parent)
 
 
-class FaceLoadingWidget(ApplicationWidget):
+class FaceLoadingWidget(QWidget):
     def __init__(self, parent=None):
-        ApplicationWidget.__init__(self, parent)
+        QWidget.__init__(self, parent)
+        # ApplicationWidget.__init__(self, parent)
+        self.__setup_ui()
+
+    def __setup_ui(self):
+
+        self.layout = QVBoxLayout()
+
+        self.enter_name_label = QLabel("Enter user name:")
+        self.layout.addWidget(self.enter_name_label)
+
+        self.name_line_edit = QLineEdit()
+        self.layout.addWidget(self.name_line_edit)
+
+        self.from_file_button = QPushButton("From file")
+        self.from_file_button.clicked.connect(self.load_from_file)
+        self.layout.addWidget(self.from_file_button)
+
+        self.from_camera_button = QPushButton("From camera")
+        self.from_camera_button.clicked.connect(self.load_from_camera)
+        self.layout.addWidget(self.from_camera_button)
+
+        self.layout.addStretch()
+
+        self.back_button = QPushButton("Back")
+        self.back_button.clicked.connect(self.back)
+        self.layout.addWidget(self.back_button)
+
+        self.setLayout(self.layout)
+
+    @Slot()
+    def load_from_file(self):
+        pass
+
+    @Slot()
+    def load_from_camera(self):
+        pass
+
+    @Slot()
+    def back(self):
+        self.parent().set_main_menu()
 
 
 class FaceAuthenticationWidget(ApplicationWidget):
@@ -56,6 +99,8 @@ class MainMenuWidget(QWidget):
         self.settings_button = QPushButton("Settings")
         self.settings_button.clicked.connect(self.open_settings_widget)
         self.layout.addWidget(self.settings_button)
+
+        self.layout.addStretch()
 
         self.quit_button = QPushButton("Quit")
         self.quit_button.clicked.connect(self.quit)
@@ -165,6 +210,7 @@ class GUIManager:
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    # backend = AppManager()
 
     window = MainWindow()
     window.resize(800, 600)

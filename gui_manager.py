@@ -42,15 +42,15 @@ class ApplicationWidget(QWidget):
         self.parent().set_main_menu()
 
 
-class SettingsWidget(ApplicationWidget):
+class SettingsWidget(QWidget):
     def __init__(self, parent=None):
-        ApplicationWidget.__init__(self, parent)
+        QWidget.__init__(self, parent)
+        # TODO: finish this widget
 
 
 class FaceLoadingWidget(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
-        # ApplicationWidget.__init__(self, parent)
         self.__setup_ui()
 
     def __setup_ui(self):
@@ -108,16 +108,60 @@ class FaceLoadingWidget(QWidget):
 
     @Slot()
     def load_from_camera(self):
-        pass
+        user_name = self.name_line_edit.text()
+        id_inp = self.id_line_edit.text()
+
+        if not id_inp:
+            id_ = app.get_next_face_id()
+        else:
+            id_ = int(id_inp)
+
+        if user_name:
+            app.load_from_camera(id_, user_name)
+            success_message = QErrorMessage(self)
+            success_message.showMessage(f"Successfully loaded a new face of {user_name} (id {id_})")
+            self.name_line_edit.clear()
+            self.id_line_edit.clear()
+        else:
+            error_message = QErrorMessage(self)
+            error_message.showMessage("User name not provided")
 
     @Slot()
     def back(self):
         self.parent().set_main_menu()
 
 
-class FaceAuthenticationWidget(ApplicationWidget):
+class FaceAuthenticationWidget(QWidget):
     def __init__(self, parent=None):
-        ApplicationWidget.__init__(self, parent)
+        QWidget.__init__(self, parent)
+
+        self.__setup_ui()
+
+    def __setup_ui(self):
+        self.layout = QVBoxLayout()
+
+        self.start_button = QPushButton("Start (switch on the camera)")
+        self.start_button.clicked.connect(self.authenticate)
+        self.layout.addWidget(self.start_button)
+
+        self.description = QLabel("Press ESC to quit authentication")
+        self.layout.addWidget(self.description)
+
+        self.layout.addStretch()
+
+        self.back_button = QPushButton("Back to main menu")
+        self.back_button.clicked.connect(self.back)
+        self.layout.addWidget(self.back_button)
+
+        self.setLayout(self.layout)
+
+    @Slot()
+    def authenticate(self):
+        app.authenticate()
+
+    @Slot()
+    def back(self):
+        self.parent().set_main_menu()
 
 
 class MainMenuWidget(QWidget):
@@ -242,10 +286,6 @@ class MainWindow(QMainWindow):
     @Slot()
     def exit_app(self, checked):
         QApplication.quit()
-
-
-class GUIManager:
-    pass
 
 
 if __name__ == '__main__':

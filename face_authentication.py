@@ -26,7 +26,7 @@ class AppManager:
 
 	def get_next_face_id(self) -> int:
 		try:
-			return max(map(int, os.path.split(self.__faces_dir)[-1].split('.')[1])) + 1
+			return max(map(int, [filename.split('.')[1] for filename in os.listdir(self.__faces_dir)]))
 		except IndexError:
 			return 0
 
@@ -38,4 +38,3 @@ class AppManager:
 	@property
 	def faces_dir(self):
 		return self.__faces_dir
-

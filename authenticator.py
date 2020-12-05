@@ -8,7 +8,7 @@ class Authenticator:
 			self,
 			yml_path: str = 'face.yml',
 			cascade_path: str = "haarcascade_frontalface_default.xml",
-			faces_path: str = 'face'
+			faces_path: str = 'faces'
 	):
 		self.YML_PATH = yml_path
 		self.CASCADE_PATH = cascade_path

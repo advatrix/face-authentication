@@ -84,7 +84,7 @@ class CameraLoader(BaseImageLoader):
 			for (x, y, w, h) in faces:
 				cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 2)
 				count += 1
-				self._save_face(face_id, count, gray[y:y + h, x:x + w])
+				self._save_face(face_id, count, gray[y:y + h, x:x + w], name)
 
 			cv2.imshow("camera", img)
 			k = cv2.waitKey(100) & 0xff  # 'ESC'

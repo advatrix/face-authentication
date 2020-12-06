@@ -8,6 +8,10 @@ from face_loader import FaceLoader
 from authenticator import Authenticator
 
 
+class EmptyDirectoryName(Exception):
+	pass
+
+
 class AppManager:
 	def __init__(self):
 		self.loader = FaceLoader()
@@ -38,3 +42,24 @@ class AppManager:
 	@property
 	def faces_dir(self):
 		return self.__faces_dir
+
+	def set_faces_dir(self, new_dir: str):
+		if not os.path.isdir(new_dir):
+			raise NotADirectoryError(f"{new_dir} is not a directory")
+
+		self.loader.set_faces_dir(new_dir)
+		self.authenticator.set_faces_dir(new_dir)
+
+	@property
+	def confidence_threshold(self):
+		return self.authenticator.confidence_threshold
+
+	def set_confidence_threshold(self, th: int):
+		self.authenticator.set_confidence_threshold(th)
+
+	@property
+	def camera_image_count(self):
+		return self.loader.camera_image_counter
+
+	def set_camera_image_count(self, cnt: int):
+		self.loader.set_camera_image_count(cnt)

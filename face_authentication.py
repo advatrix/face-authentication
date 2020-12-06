@@ -4,7 +4,7 @@ import sys
 import argparse
 import os
 
-from face_loader import FaceLoader
+from face_loader import FaceLoader, EmptyImageError, FaceNotFoundError
 from authenticator import Authenticator
 
 
@@ -52,8 +52,10 @@ class AppManager:
 		Call this method to get id for a new user.
 		:return: id: int: id for a new user
 		"""
+		if not os.listdir(self.__faces_dir):
+			return 0
 		try:
-			return max(map(int, [filename.split('.')[1] for filename in os.listdir(self.__faces_dir)]))
+			return max(map(int, [filename.split('.')[1] for filename in os.listdir(self.__faces_dir)])) + 1
 		except IndexError:
 			return 0
 

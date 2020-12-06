@@ -5,7 +5,7 @@ from PySide2.QtCore import Slot, Qt
 from PySide2.QtWidgets import QMainWindow, QAction, QApplication, QPushButton, QVBoxLayout, QWidget, QStackedLayout, \
     QLabel, QLineEdit, QFileDialog, QErrorMessage, QHBoxLayout, QSlider
 
-from face_authentication import AppManager
+from face_authentication import AppManager, EmptyImageError, FaceNotFoundError
 
 
 class SettingsWidget(QWidget):
@@ -175,11 +175,15 @@ class FaceLoadingWidget(QWidget):
             id_ = int(id_inp)
 
         if file_name and user_name:
-            app.load_from_file(file_name, id_, user_name)
-            success_message = QErrorMessage(self)
-            success_message.showMessage(f"Successfully loaded a new face of {user_name} (id {id_})")
-            self.name_line_edit.clear()
-            self.id_line_edit.clear()
+            try:
+                app.load_from_file(file_name, id_, user_name)
+                success_message = QErrorMessage(self)
+                success_message.showMessage(f"Successfully loaded a new face of {user_name} (id {id_})")
+                self.name_line_edit.clear()
+                self.id_line_edit.clear()
+            except (EmptyImageError, FaceNotFoundError) as e:
+                error_message = QErrorMessage(self)
+                error_message.showMessage(str(e))
         else:
             error_message = QErrorMessage(self)
             error_message.showMessage("File name or user name not provided")

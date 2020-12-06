@@ -15,6 +15,19 @@ class NoSourceProvidedError(Exception):
 	pass
 
 
+class EmptyImageError(Exception):
+	"""
+	Exception thrown when there is an empty image provided or file is not an image.
+	"""
+	pass
+
+
+class FaceNotFoundError(Exception):
+	"""
+	Exception thrown when there is no face found on the provided image.
+	"""
+
+
 class FaceLoader:
 	"""
 	Face loading manager.
@@ -175,15 +188,20 @@ class FileLoader(BaseImageLoader):
 		if source is None:
 			raise NoSourceProvidedError
 		img = cv2.imread(source)
+		if img is None:
+			raise EmptyImageError("Empty image!")
 		gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-		x, y, w, h = self.face_cascade.detectMultiScale(
+		retval = self.face_cascade.detectMultiScale(
 			gray,
 			scaleFactor=self._SCALE_FACTOR,
 			minNeighbors=self._MIN_NEIGHBORS,
 			minSize=self._MIN_SIZE
-		)[0]
+		)
+		if retval == ():
+			raise FaceNotFoundError("Face not found!")
+		x, y, w, h = retval[0]
 		count = len(list(filter(lambda f: int(f.split('.')[1]) == face_id, os.listdir(save_path))))
-		self._save_face(face_id, count+1, gray[y:y + h, x:x + w])
+		self._save_face(face_id, count+1, gray[y:y + h, x:x + w], name)
 
 
 class Trainer:

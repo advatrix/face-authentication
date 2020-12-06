@@ -2,34 +2,18 @@ import sys
 import os
 
 from PySide2.QtCore import Slot, Qt
-from PySide2.QtGui import QKeySequence, QWindow
 from PySide2.QtWidgets import QMainWindow, QAction, QApplication, QPushButton, QVBoxLayout, QWidget, QStackedLayout, \
     QLabel, QLineEdit, QFileDialog, QErrorMessage, QHBoxLayout, QSlider
 
 from face_authentication import AppManager
 
 
-class ApplicationWidget(QWidget):
-    def __init__(self, parent=None):
-        QWidget.__init__(self, parent)
-
-        self.back_button = QPushButton("Back")
-        self.back_button.clicked.connect(self.back)
-
-        self.layout = QVBoxLayout()
-        self.layout.addWidget(self.back_button)
-
-        self.setLayout(self.layout)
-
-    @Slot()
-    def back(self):
-        self.parent().set_main_menu()
-
-
 class SettingsWidget(QWidget):
+    """
+    Widget that provides GUI in Settings page.
+    """
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
-        # TODO: finish this widget
         self.__setup_ui()
         self.__cur_dir_name = app.faces_dir
 
@@ -140,6 +124,9 @@ class SettingsWidget(QWidget):
 
 
 class FaceLoadingWidget(QWidget):
+    """
+    Widget that provides GUI in Face loading page.
+    """
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         self.__setup_ui()
@@ -223,9 +210,11 @@ class FaceLoadingWidget(QWidget):
 
 
 class FaceAuthenticationWidget(QWidget):
+    """
+    Widget that provides GUI in Face authentication page.
+    """
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
-
         self.__setup_ui()
 
     def __setup_ui(self):
@@ -256,6 +245,9 @@ class FaceAuthenticationWidget(QWidget):
 
 
 class MainMenuWidget(QWidget):
+    """
+    Widget that provides GUI in Main menu.
+    """
     def __init__(self, parent=None):
         QWidget.__init__(self, parent)
         self.__setup_ui()
@@ -301,6 +293,9 @@ class MainMenuWidget(QWidget):
 
 
 class MainWindowCentralWidget(QWidget):
+    """
+    Container for all widgets of pages in the application.
+    """
     def __init__(self):
         QWidget.__init__(self)
 
@@ -335,7 +330,11 @@ class MainWindowCentralWidget(QWidget):
 
         self.setLayout(self.stacked_layout)
 
-    def set_current_widget(self, widget_name):
+    def set_current_widget(self, widget_name: str):
+        """
+        Choose which widget (page) to display
+        :param widget_name: name of the widget to switch
+        """
         self.stacked_layout.setCurrentWidget(self.widgets[widget_name])
 
     def set_main_menu(self):
@@ -356,6 +355,9 @@ class MainWindowCentralWidget(QWidget):
 
 
 class MainWindow(QMainWindow):
+    """
+    Main window of the application.
+    """
     def __init__(self):
         QMainWindow.__init__(self)
         self.setWindowTitle("Face authentication app")

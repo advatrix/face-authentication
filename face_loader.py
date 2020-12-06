@@ -9,6 +9,9 @@ import numpy as np
 
 
 class NoSourceProvidedError(Exception):
+	"""
+	Exception thrown when there is no source image with faces provided to the Loader.
+	"""
 	pass
 
 

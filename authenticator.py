@@ -4,6 +4,9 @@ import cv2
 
 
 class Authenticator:
+	"""
+	Authentication manager.
+	"""
 	def __init__(
 			self,
 			yml_path: str = 'face.yml',
@@ -19,19 +22,21 @@ class Authenticator:
 	def __str__(self):
 		return "Face authenticator"
 
-	def get_ids_and_names(self):
+	def get_ids_and_names(self) -> dict[int: str]:
 		"""
-		return dict {id: username} of loaded faces
+		:return: dict {id: username} of loaded faces
 		"""
 		return {int(file.split('.')[1]): file.split('.')[0] for file in os.listdir(self.FACES_PATH)}
 
 	def authenticate(self):
+		"""
+		Switch on the camera and start authenticating.
+		"""
 		recognizer = self.create_recognizer()
 		face_cascade = cv2.CascadeClassifier(self.CASCADE_PATH)
 		font = cv2.FONT_HERSHEY_SIMPLEX
 
 		names = self.get_ids_and_names()
-		print(names)
 
 		cam = cv2.VideoCapture(0)
 		cam.set(3, 640)  # set video width
@@ -52,21 +57,21 @@ class Authenticator:
 
 				id_, confidence = recognizer.predict(gray[y:y + h, x:x + w])
 
-				if confidence < self.__CONFIDENCE_THRESHOLD:
+				if confidence < self.__CONFIDENCE_THRESHOLD:  # some user is recognized
 					name = names[id_]
 					confidence = "Confidence:  {0}".format(round(self.__CONFIDENCE_THRESHOLD - confidence))
-					cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
-				else:
+					cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)  # draw a green rectangle around the face
+				else:  # unknown face
 					name = "unknown"
 					confidence = "Confidence:  {0}".format(round(self.__CONFIDENCE_THRESHOLD - confidence))
-					cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
+					cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)  # draw a red rectangle around the face
 
-				cv2.putText(img, str(name), (x + 5, y - 5), font, 1, (255, 255, 255), 2)
-				cv2.putText(img, str(confidence), (x + 5, y + h - 5), font, 1, (255, 255, 0), 1)
+				cv2.putText(img, str(name), (x + 5, y - 5), font, 1, (255, 255, 255), 2)  # print the name of the user
+				cv2.putText(img, str(confidence), (x + 5, y + h - 5), font, 1, (255, 255, 0), 1)  # print confidence
 
 			cv2.imshow('camera', img)
 
-			k = cv2.waitKey(10) & 0xff  # 'ESC' для Выхода
+			k = cv2.waitKey(10) & 0xff  # 'ESC' to quit
 			if k == 27:
 				break
 
@@ -74,6 +79,9 @@ class Authenticator:
 		cv2.destroyAllWindows()
 
 	def create_recognizer(self):
+		"""
+		Create a LBPH face recognizer and load .yml file with its settings
+		"""
 		recognizer = cv2.face.LBPHFaceRecognizer_create()
 		recognizer.read(self.YML_PATH)
 		return recognizer
@@ -85,7 +93,7 @@ class Authenticator:
 		self.FACES_PATH = new_dir
 
 	@property
-	def confidence_threshold(self):
+	def confidence_threshold(self) -> int:
 		return self.__CONFIDENCE_THRESHOLD
 
 	def set_confidence_threshold(self, th: int):

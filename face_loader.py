@@ -58,7 +58,7 @@ class FaceLoader:
 		self._SAVES_PATH = new_dir
 
 	@property
-	def camera_image_counter(self):
+	def camera_image_counter(self) -> int:
 		return self.camera_loader.image_count
 
 	def set_camera_image_count(self, cnt: int):

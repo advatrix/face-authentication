@@ -60,6 +60,21 @@ class SettingsWidget(QWidget):
 
         self.layout.addLayout(self.camera_img_count_layout)
 
+        self.fps_layout = QHBoxLayout()
+        self.fps_label = QLabel(f"FPS: {app.fps}")
+        self.fps_layout.addWidget(self.fps_label)
+
+        self.fps_slider = QSlider()
+        self.fps_slider.setOrientation(Qt.Horizontal)
+        self.fps_slider.setMinimum(1)
+        self.fps_slider.setMaximum(30)
+        self.fps_slider.setSingleStep(1)
+        self.fps_slider.setValue(app.fps)
+        self.fps_slider.valueChanged.connect(self.set_fps)
+        self.fps_layout.addWidget(self.fps_slider)
+
+        self.layout.addLayout(self.fps_layout)
+
         self.layout.addStretch()
 
         self.save_settings_button = QPushButton("Save")
@@ -71,6 +86,10 @@ class SettingsWidget(QWidget):
         self.layout.addWidget(self.back_button)
 
         self.setLayout(self.layout)
+
+    @Slot()
+    def set_fps(self):
+        self.fps_label.setText(f"FPS: {self.fps_slider.value()}")
 
     @Slot()
     def set_camera_img_count(self):
@@ -96,6 +115,7 @@ class SettingsWidget(QWidget):
             app.set_faces_dir(self.__cur_dir_name)
             app.set_confidence_threshold(self.confidence_threshold_slider.value())
             app.set_camera_image_count(self.camera_img_count_slider.value())
+            app.set_fps(self.fps_slider.value())
         except (NotADirectoryError, ValueError) as e:
             error_message = QErrorMessage(self)
             error_message.showMessage(str(e))

@@ -1,4 +1,5 @@
 import os
+import time
 
 import cv2
 
@@ -18,9 +19,22 @@ class Authenticator:
 		self.CASCADE_PATH = cascade_path
 		self.FACES_PATH = faces_path
 		self.__CONFIDENCE_THRESHOLD = confidence_threshold
+		self.__FPS = 24
+		self.__PAUSE = 1 / self.__FPS
 			
 	def __str__(self):
 		return "Face authenticator"
+
+	@property
+	def fps(self) -> int:
+		return self.__FPS
+
+	def set_fps(self, fps: int):
+		if 1 <= fps <= 30:
+			self.__FPS = fps
+			self.__PAUSE = 1 / self.__FPS
+		else:
+			raise ValueError("FPS should be between 1 and 30")
 
 	def get_ids_and_names(self) -> dict[int: str]:
 		"""
@@ -39,8 +53,11 @@ class Authenticator:
 		names = self.get_ids_and_names()
 
 		cam = cv2.VideoCapture(0)
-		cam.set(3, 640)  # set video width
-		cam.set(4, 480)  # set video height
+		# cam.set(3, 640)  # set video width
+		# cam.set(4, 480)  # set video height
+		cam.set(cv2.CAP_PROP_FPS, self.__FPS)
+		cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+		cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
 
 		while True:
 			ret, img = cam.read()
@@ -74,6 +91,8 @@ class Authenticator:
 			k = cv2.waitKey(10) & 0xff  # 'ESC' to quit
 			if k == 27:
 				break
+
+			time.sleep(self.__PAUSE)
 
 		cam.release()
 		cv2.destroyAllWindows()

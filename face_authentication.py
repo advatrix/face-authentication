@@ -102,3 +102,16 @@ class AppManager:
 		:param cnt: a new camera shot count
 		"""
 		self.loader.set_camera_image_count(cnt)
+
+	@property
+	def fps(self) -> int:
+		"""
+		Get current camera FPS
+		"""
+		return self.authenticator.fps
+
+	def set_fps(self, fps: int):
+		"""
+		Set new camera FPS
+		"""
+		self.authenticator.set_fps(fps)

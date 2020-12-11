@@ -21,9 +21,15 @@ class Authenticator:
 		self.__CONFIDENCE_THRESHOLD = confidence_threshold
 		self.__FPS = 24
 		self.__PAUSE = 1 / self.__FPS
+		self.__cam_stop_flag = False
 			
 	def __str__(self):
 		return "Face authenticator"
+
+	def camera_off(self):
+		if self.__cam_stop_flag:
+			raise RuntimeError("Camera is already off")
+		self.__cam_stop_flag = True
 
 	@property
 	def fps(self) -> int:
@@ -46,6 +52,8 @@ class Authenticator:
 		"""
 		Switch on the camera and start authenticating.
 		"""
+		self.__cam_stop_flag = False
+
 		recognizer = self.create_recognizer()
 		face_cascade = cv2.CascadeClassifier(self.CASCADE_PATH)
 		font = cv2.FONT_HERSHEY_SIMPLEX
@@ -89,8 +97,9 @@ class Authenticator:
 			cv2.imshow('camera', img)
 
 			k = cv2.waitKey(10) & 0xff  # 'ESC' to quit
-			if k == 27:
+			if k == 27 or self.__cam_stop_flag:
 				break
+
 
 			time.sleep(self.__PAUSE)
 

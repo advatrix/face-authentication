@@ -115,3 +115,9 @@ class AppManager:
 		Set new camera FPS
 		"""
 		self.authenticator.set_fps(fps)
+
+	def camera_off(self):
+		"""
+		Turn the camera off and quit authentication mode
+		"""
+		self.authenticator.camera_off()

@@ -61,8 +61,6 @@ class Authenticator:
 		names = self.get_ids_and_names()
 
 		cam = cv2.VideoCapture(0)
-		# cam.set(3, 640)  # set video width
-		# cam.set(4, 480)  # set video height
 		cam.set(cv2.CAP_PROP_FPS, self.__FPS)
 		cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 		cam.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
@@ -99,7 +97,6 @@ class Authenticator:
 			k = cv2.waitKey(10) & 0xff  # 'ESC' to quit
 			if k == 27 or self.__cam_stop_flag:
 				break
-
 
 			time.sleep(self.__PAUSE)
 

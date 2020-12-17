@@ -22,9 +22,45 @@ class Authenticator:
 		self.__FPS = 24
 		self.__PAUSE = 1 / self.__FPS
 		self.__cam_stop_flag = False
-			
+
+		# parameters for classifier
+
+		self.__SCALE_FACTOR = 1.2
+		self.__MIN_NEIGHBORS = 5
+		self.__MIN_SIZE = 10, 10
+
 	def __str__(self):
 		return "Face authenticator"
+
+	@property
+	def scale_factor(self) -> float:
+		return self.__SCALE_FACTOR
+
+	@property
+	def min_neighbors(self) -> int:
+		return self.__MIN_NEIGHBORS
+
+	@property
+	def min_size(self) -> tuple[int, int]:
+		return self.__MIN_SIZE
+
+	def set_scale_factor(self, sf: float):
+		if sf <= 0:
+			raise ValueError("Scale factor should be a positive number")
+		self.__SCALE_FACTOR = sf
+
+	def set_min_neighbors(self, mn: int):
+		if mn <= 0 or not isinstance(mn, int):
+			raise ValueError("Min neighbors should be a positive integer")
+		self.__MIN_NEIGHBORS = mn
+
+	def set_min_size(self, ms: tuple[int, int]):
+		if len(ms) != 2:
+			raise ValueError("Min size should be a pair of integers")
+		for dim in ms:
+			if not isinstance(dim, int):
+				raise ValueError("Min size should be a pair of integers")
+		self.__MIN_SIZE = ms
 
 	def camera_off(self):
 		if self.__cam_stop_flag:

@@ -121,3 +121,46 @@ class AppManager:
 		Turn the camera off and quit authentication mode
 		"""
 		self.authenticator.camera_off()
+
+	@property
+	def scale_factor(self) -> float:
+		"""
+		Get current scale factor of the Authenticator's classifier
+		"""
+		return self.authenticator.scale_factor
+
+	@property
+	def min_neighbors(self) -> int:
+		"""
+		Get current min neighbors parameter of the Authenticator's classifier
+		"""
+		return self.authenticator.min_neighbors
+
+	@property
+	def min_size(self) -> tuple[int, int]:
+		"""
+		Get current min size parameter of the Authenticator's classifier
+		"""
+		return self.authenticator.min_size
+
+	def set_scale_factor(self, scale_factor: float):
+		"""
+		Set new scale factor of the Authenticator's classifier
+		:param scale_factor: new scale factor
+		"""
+		self.authenticator.set_scale_factor(scale_factor)
+
+	def set_min_neighbors(self, min_neighbors: int):
+		"""
+		Set new min neighbors parameter of the Authenticator's classifier.
+		:param min_neighbors: new min neighbors count
+		"""
+		self.authenticator.set_min_neighbors(min_neighbors)
+
+	def set_min_size(self, min_size_x: int, min_size_y: int):
+		"""
+		Set new minimum size of the image parameter of the Authenticator's classifier
+		:param min_size_x: minimum width
+		:param min_size_y: minimum height
+		"""
+		self.authenticator.set_min_size((min_size_x, min_size_y))

@@ -75,6 +75,69 @@ class SettingsWidget(QWidget):
 
         self.layout.addLayout(self.fps_layout)
 
+        self.scale_factor_layout = QHBoxLayout()
+        self.scale_factor_label = QLabel("Scale factor")
+        self.scale_factor_layout.addWidget(self.scale_factor_label)
+
+        self.scale_factor_line_edit = QLineEdit()
+        self.scale_factor_line_edit.setText(str(app.scale_factor))
+        self.scale_factor_layout.addWidget(self.scale_factor_line_edit)
+
+        self.layout.addLayout(self.scale_factor_layout)
+
+        self.min_neighbors_layout = QHBoxLayout()
+        self.min_neighbors_label = QLabel(f"Min neighbors: {app.min_neighbors}")
+        self.min_neighbors_layout.addWidget(self.min_neighbors_label)
+
+        self.min_neighbors_slider = QSlider()
+        self.min_neighbors_slider.setOrientation(Qt.Horizontal)
+        self.min_neighbors_slider.setMinimum(1)
+        self.min_neighbors_slider.setMaximum(10)
+        self.min_neighbors_slider.setSingleStep(1)
+        self.min_neighbors_slider.setValue(app.min_neighbors)
+        self.min_neighbors_slider.valueChanged.connect(self.set_min_neighbors)
+        self.min_neighbors_layout.addWidget(self.min_neighbors_slider)
+
+        self.layout.addLayout(self.min_neighbors_layout)
+
+        self.min_size_layout = QHBoxLayout()
+        self.min_size_label = QLabel("Min size")
+        self.min_size_layout.addWidget(self.min_size_label)
+
+        x, y = app.min_size
+
+        self.min_size_x_y_layout = QVBoxLayout()
+        self.min_size_x_layout = QHBoxLayout()
+        self.min_size_x_label = QLabel(f"Width: {x}")
+        self.min_size_x_layout.addWidget(self.min_size_x_label)
+
+        self.min_size_x_slider = QSlider()
+        self.min_size_x_slider.setOrientation(Qt.Horizontal)
+        self.min_size_x_slider.setMinimum(1)
+        self.min_size_x_slider.setMaximum(24)
+        self.min_size_x_slider.setSingleStep(1)
+        self.min_size_x_slider.setValue(x)
+        self.min_size_x_slider.valueChanged.connect(self.set_min_size_x)
+        self.min_size_x_layout.addWidget(self.min_size_x_slider)
+
+        self.min_size_y_layout = QHBoxLayout()
+        self.min_size_y_label = QLabel(f"Height: {y}")
+        self.min_size_y_layout.addWidget(self.min_size_y_label)
+
+        self.min_size_y_slider = QSlider()
+        self.min_size_y_slider.setOrientation(Qt.Horizontal)
+        self.min_size_y_slider.setMinimum(1)
+        self.min_size_y_slider.setMaximum(24)
+        self.min_size_y_slider.setValue(y)
+        self.min_size_y_slider.valueChanged.connect(self.set_min_size_y)
+        self.min_size_y_layout.addWidget(self.min_size_y_slider)
+
+        self.min_size_x_y_layout.addLayout(self.min_size_x_layout)
+        self.min_size_x_y_layout.addLayout(self.min_size_y_layout)
+
+        self.min_size_layout.addLayout(self.min_size_x_y_layout)
+        self.layout.addLayout(self.min_size_layout)
+
         self.layout.addStretch()
 
         self.save_settings_button = QPushButton("Save")
@@ -86,6 +149,19 @@ class SettingsWidget(QWidget):
         self.layout.addWidget(self.back_button)
 
         self.setLayout(self.layout)
+
+    @Slot()
+    def set_min_size_x(self):
+        self.min_size_x_label.setText(f"Width: {self.min_size_x_slider.value()}")
+
+    @Slot()
+    def set_min_size_y(self):
+        self.min_size_y_label.setText(f"Height: {self.min_size_y_slider.value()}")
+
+
+    @Slot()
+    def set_min_neighbors(self):
+        self.min_neighbors_label.setText(f"Min neighbors: {self.min_neighbors_slider.value()}")
 
     @Slot()
     def set_fps(self):
@@ -107,7 +183,13 @@ class SettingsWidget(QWidget):
         self.reset_faces_directory()
         self.reset_confidence_threshold()
         self.reset_camera_img_count()
+        self.reset_min_neighbors()
+
         self.parent().set_main_menu()
+
+    def reset_min_neighbors(self):
+        self.min_neighbors_slider.setValue(app.min_neighbors)
+        self.min_neighbors_label.setText(f"Min neighbors: {app.min_neighbors}")
 
     @Slot()
     def save_settings(self):
@@ -116,6 +198,9 @@ class SettingsWidget(QWidget):
             app.set_confidence_threshold(self.confidence_threshold_slider.value())
             app.set_camera_image_count(self.camera_img_count_slider.value())
             app.set_fps(self.fps_slider.value())
+            app.set_scale_factor(float(self.scale_factor_line_edit.text()))
+            app.set_min_neighbors(self.min_neighbors_slider.value())
+            app.set_min_size(self.min_size_x_slider.value(), self.min_size_y_slider.value())
         except (NotADirectoryError, ValueError) as e:
             error_message = QErrorMessage(self)
             error_message.showMessage(str(e))
